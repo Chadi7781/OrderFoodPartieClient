@@ -1,0 +1,10 @@
+<resources>
+
+
+    <style name="RatingDialogButtonStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/colorWhite</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/RatingDialogButtonStyle</item>
+        <item name="android:buttonBarNegativeButtonStyle">@color/colorWhite</item>
+
+    </style>
+</resources>
