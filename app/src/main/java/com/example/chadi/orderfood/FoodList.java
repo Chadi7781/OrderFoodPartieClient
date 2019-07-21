@@ -160,6 +160,7 @@ public class FoodList extends AppCompatActivity {
                 viewHolder.fav_image.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Toast.makeText(FoodList.this, "favorit", Toast.LENGTH_SHORT).show();
                         if(!localDB.isFavorite(adapter.getRef(position).getKey())) {
                             localDB.addToFavorites(adapter.getRef(position).getKey());
                             viewHolder.fav_image.setImageResource(R.drawable.ic_favorite_black_24dp);
@@ -187,6 +188,7 @@ public class FoodList extends AppCompatActivity {
                 });
             }
         };
+        searchAdapter.notifyDataSetChanged();
         recyclerView.setAdapter(searchAdapter); //set adapter for recycler view is search result
     }
 
@@ -236,6 +238,7 @@ public class FoodList extends AppCompatActivity {
         };
         //set adapter
         Log.d("TAG",""+adapter.getItemCount());
+        adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);
     }
 }

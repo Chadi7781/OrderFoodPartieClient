@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -139,8 +140,7 @@ public class SignIn extends AppCompatActivity {
           public void onDataChange(DataSnapshot dataSnapshot) {
              user = dataSnapshot.child(edtPhone.getText().toString())
                     .getValue(User.class);
-
-
+            Log.d("Hey in Sign I :   " , "onDataChange: "+ edtPhone.getText().toString());
 
             if(user.getSecureCode().equals(edtSecureCode.getText().toString()))
               Toast.makeText(SignIn.this ,"Your password :"+user.getPassword(),Toast.LENGTH_LONG).show();

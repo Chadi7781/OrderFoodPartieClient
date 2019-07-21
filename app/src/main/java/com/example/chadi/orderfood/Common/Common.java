@@ -5,6 +5,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.example.chadi.orderfood.Model.User;
+import com.example.chadi.orderfood.Remote.APIService;
+import com.example.chadi.orderfood.Remote.RetrofitClient;
 
 public class Common {
     public static User CurrentUser; //To save current user
@@ -12,6 +14,13 @@ public class Common {
     public static final String USER_KEY ="User";
     public static final String PWD_KEY="Password";
     public static  final String DELETE="Delete";
+
+    private static final String BASE_URL = "https://fcm.googleapis.com/";
+
+    public static APIService getFCMService(){
+        return RetrofitClient.getClient(BASE_URL).create(APIService.class);
+
+    }
 
     public static String convertCodeToStatus(String status) {
         if(status.equals("0"))

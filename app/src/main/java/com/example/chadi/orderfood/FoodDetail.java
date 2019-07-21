@@ -5,6 +5,7 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -22,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.stepstone.apprating.AppRatingDialog;
@@ -31,12 +33,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class FoodDetail extends AppCompatActivity implements RatingDialogListener {
+
     TextView food_name,food_description,food_price;
     ImageView food_image;
     CollapsingToolbarLayout collapsingToolbarLayout;
     FloatingActionButton btnCart,btnRating;
-
     ElegantNumberButton numberButton;
+
     String foodId="";
 
     FirebaseDatabase database;
@@ -58,7 +61,35 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
         ratingTbl = database.getReference().child("Rating");
 
         //init view
-        init();
+        food_name=(TextView)findViewById(R.id.food_name);
+        food_price=(TextView)findViewById(R.id.food_price);
+        food_description=(TextView)findViewById(R.id.food_description);
+        food_image=(ImageView) findViewById(R.id.img_food);
+        numberButton=(ElegantNumberButton)findViewById(R.id.number_button);
+        btnCart=(FloatingActionButton)findViewById(R.id.btnCart);
+        btnRating=(FloatingActionButton)findViewById(R.id.btnrating);
+        ratingBar = (RatingBar)findViewById(R.id.ratingBar);
+
+        collapsingToolbarLayout=(CollapsingToolbarLayout)findViewById(R.id.collapsing);
+        collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppbar);
+        collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapseAppbar);
+
+        //Get foodId from intent
+        if(getIntent()!=null){
+            foodId=getIntent().getStringExtra("FoodId");
+            if(!foodId.isEmpty()){
+                if(Common.isConnectedToInternet(getBaseContext())){
+                    getDetailFood(foodId);
+                    getRatingFood(foodId);
+                }
+                else {
+                    Toast.makeText(FoodDetail.this, "Please check your connection !!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+            }
+        }
+
 
         btnRating.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,8 +117,9 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
 
     private void showRatingDialog() {
         new AppRatingDialog.Builder()
+
                 .setPositiveButtonText("Submit")
-                .setNegativeButtonText("Cancal")
+                .setNegativeButtonText("Cancel")
                 .setNoteDescriptions(Arrays.asList("VeryBad","Not Good","Quite Ok","Very Good","Excellent"))
                 .setDefaultRating(1)
                 .setTitle("Rate this food")
@@ -99,63 +131,35 @@ public class FoodDetail extends AppCompatActivity implements RatingDialogListene
                 .setCommentTextColor(R.color.colorWhite)
                 .setCommentBackgroundColor(R.color.colorPrimaryDark)
                 .setWindowAnimation(R.style.RatingDialogFadeAnim)
+
                 .create(FoodDetail.this)
+
                 .show();
     }
 
-    private void init() {
-        food_name=(TextView)findViewById(R.id.food_name);
-        food_price=(TextView)findViewById(R.id.food_price);
-        food_description=(TextView)findViewById(R.id.food_description);
-        food_image=(ImageView) findViewById(R.id.img_food);
-        numberButton=(ElegantNumberButton)findViewById(R.id.number_button) ;
-        btnCart=(FloatingActionButton)findViewById(R.id.btnCart);
-        btnRating=(FloatingActionButton)findViewById(R.id.btnrating);
-
-
-        collapsingToolbarLayout=(CollapsingToolbarLayout)findViewById(R.id.collapsing);
-        collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.ExpandedAppbar);
-        collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapseAppbar);
-
-        //Get foodId from intent
-        if(getIntent()!=null){
-            foodId=getIntent().getStringExtra("FoodId");
-            if(!foodId.isEmpty()){
-                if(Common.isConnectedToInternet(getBaseContext())){
-                    getDetailFood(foodId);
-                    getRatingFood(foodId);
-                }
-                else {
-                    Toast.makeText(FoodDetail.this, "Please check your connection !!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-            }
-        }
-
-    }
 
     private void getRatingFood(String foodId) {
-        com.google.firebase.database.Query foodRating = ratingTbl.orderByChild("foodId").equalTo(foodId);
 
+        Query foodRating = ratingTbl.orderByChild("foodId").equalTo(foodId);
         foodRating.addValueEventListener(new ValueEventListener() {
             int count =0,sum=0;
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
                     Rating item = postSnapshot.getValue(Rating.class);
-                    sum+=Integer.parseInt(item.getRateValue());
-                    count++;
+                    try {
+                        Log.d("Hey in Sign I :   " ,"value of item   :  "+item.getRateValue());
+                        sum += Integer.valueOf(item.getRateValue());
+                        count++;
+                    }catch(NumberFormatException e){
+                        Toast.makeText(FoodDetail.this, " "+item.getRateValue(), Toast.LENGTH_SHORT).show();
+                    }
                 }
                 if (count != 0){
                     float average =sum/count;
                     ratingBar.setRating(average);
-
                 }
-
-
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 

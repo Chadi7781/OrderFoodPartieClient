@@ -20,11 +20,12 @@ import android.widget.Toast;
 import com.example.chadi.orderfood.Common.Common;
 import com.example.chadi.orderfood.Interface.ItemClickListener;
 import com.example.chadi.orderfood.Model.Category;
-import com.example.chadi.orderfood.Service.ListenOrder;
+import com.example.chadi.orderfood.Model.Token;
 import com.example.chadi.orderfood.ViewHolder.MenuViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
 
 import io.paperdb.Paper;
@@ -96,9 +97,16 @@ public class Home extends AppCompatActivity
             return;
         }
 
-        //Register our Service
-        Intent service = new Intent(Home.this , ListenOrder.class);
-        startService(service);
+        updateToken(FirebaseInstanceId.getInstance().getToken());
+
+
+    }
+
+    private void updateToken(String token) {
+        FirebaseDatabase db =FirebaseDatabase.getInstance();
+        DatabaseReference tokens = db.getReference("Tokens");
+        Token data = new Token(token , false);
+        tokens.child(Common.CurrentUser.getPhone()).setValue(data);
     }
 
     private void loadMenu() {

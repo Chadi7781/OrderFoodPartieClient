@@ -26,7 +26,6 @@
             android:weightSum="10"
             android:background="#4f0e0d0e"
             android:layout_alignParentBottom="true"
-
             >
         <TextView
             android:layout_width="0dp"
@@ -38,15 +37,18 @@
             android:textSize="20sp"
             android:gravity="center"
            />
-        <ImageView
-            android:id="@+id/fav"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_favorite_border_black_24dp"
-            android:tint="@color/colorWhite"/>
-            
+
+            <ImageView
+                android:id="@+id/fav"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_favorite_border_black_24dp"
+                android:tint="@color/colorWhite"
+                />
+
         </LinearLayout>
+
 
 
     </RelativeLayout>

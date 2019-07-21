@@ -8,7 +8,7 @@ public class Rating {
 
     public Rating(){}
 
-    public Rating(String userPhone, String foodId, String comment, String rateValue) {
+    public Rating(String userPhone, String foodId, String rateValue, String comment ) {
         this.userPhone = userPhone;
         this.foodId = foodId;
         this.comment = comment;
